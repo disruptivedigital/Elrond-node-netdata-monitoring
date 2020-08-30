@@ -27,3 +27,33 @@ elrond="yes"
 cd /usr/libexec/netdata/charts.d/ && sudo chmod +x elrond.chart.sh && sudo chmod 755 elrond.chart.sh
 
 sudo systemctl restart netdata
+
+
+The alarms are configured as follows:
+
+> Elrond node is not maintaining syncronization
+- WARNING if out of sync more than 2:5 (hysteresis) consensus rounds
+- CRITICAL if out of sync more than 100:200 (hysteresis) consensus rounds 
+
+> Elrond node rate dropping
+- WARNING if node rate is dropping under 100
+- CRITICAL if node rate is dropping under 85
+
+> Elrond node Leader blocks proposed versus block accepted dropping
+- WARNING if leader blocks proposed versus blocks accepted are greater than 0
+- CRITICAL if leader blocks proposed versus blocks accepted are greater than 10
+
+> Elrond node Validator blocks signed versus blocks accepted dropping
+- WARNING if validator blocks signed versus blocks accepted are greater than 2
+- CRITICAL if validator blocks signed versus blocks accepted are greater than 20
+
+> Elrond node peers dropping
+- WARNING if peers are dropping under 40
+- CRITICAL if peers are dropping under 30
+
+
+Alarms can be configured with the following command:
+cd /etc/netdata/health.d/ && sudo nano elrond.conf
+
+Then,
+sudo systemctl restart netdata
