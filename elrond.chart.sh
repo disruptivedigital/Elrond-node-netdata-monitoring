@@ -51,7 +51,7 @@ elrond_get() {
   elrond_connected_validators="$( curl -sSL http://localhost:8080/node/heartbeatstatus | jq '.' | grep peerType | grep -c -v observer )"
   elrond_connected_nodes="$( curl -sSL http://localhost:8080/node/status | jq .data.metrics.erd_connected_nodes )"
   elrond_bls="$( curl -sSL http://localhost:8080/node/status | jq -r .data.metrics.erd_public_key_block_sign )"
-  elrond_tempRating="$( curl -sSL https://api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".tempRating' | head -c5 )"
+  elrond_tempRating="$( curl -sSL https://testnet-api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".tempRating' | head -c5 )"
   elrond_count_consensus="$( curl -sSL http://localhost:8080/node/status | jq -r .data.metrics.erd_count_consensus )"
   elrond_count_consensus_accepted_blocks="$( curl -sSL http://localhost:8080/node/status | jq -r .data.metrics.erd_count_consensus_accepted_blocks )"
   elrond_count_leader="$( curl -sSL http://localhost:8080/node/status | jq -r .data.metrics.erd_count_leader )"
@@ -98,8 +98,9 @@ CHART elrond.rating '' "Current rating" "Rating" current-rating rating line $((e
 DIMENSION rating 'Rating' absolute 1 1
 CHART elrond.epoch '' "Current epch" "Epoch" current-epoch epoch line $((elrond_priority + 4)) $elrond_update_every
 DIMENSION epoch 'Epoch' absolute 1 1
-CHART elrond.connected_pvn '' "Connected peers/validators/nodes" "Peers/Validators/Nodes" peers-validators-nodes pvn line $((elrond_priority + 5)) $elrond_update_every
+CHART elrond.peers '' "Connected peers" "Peers" peers peers line $((elrond_priority + 5)) $elrond_update_every
 DIMENSION peers 'Peers' absolute 1 1
+CHART elrond.validators_nodes '' "Connected validators/nodes" "Validators/Nodes" validators-nodes pvn line $((elrond_priority + 6)) $elrond_update_every
 DIMENSION validators 'Validators' absolute 1 1
 DIMENSION nodes 'Nodes' absolute 1 1
 EOF
@@ -134,8 +135,10 @@ END
 BEGIN elrond.epoch $1
 SET epoch = $elrond_epoch_number
 END
-BEGIN elrond.connected_pvn $1
+BEGIN elrond.peers $1
 SET peers = $elrond_connected_peers
+END
+BEGIN elrond.validators_nodes $1
 SET validators = $elrond_connected_validators
 SET nodes = $elrond_connected_nodes
 END
