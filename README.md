@@ -22,7 +22,9 @@ Edit config charts.d.conf:
 sudo nano /etc/netdata/edit-config charts.d.conf
 
 Add the following:
+
 enable_all_charts="yes"
+
 elrond="yes"
 
 cd /usr/libexec/netdata/charts.d/ && sudo chmod +x elrond.chart.sh && sudo chmod 755 elrond.chart.sh
