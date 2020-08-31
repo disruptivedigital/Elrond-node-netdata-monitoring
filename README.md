@@ -33,24 +33,24 @@ sudo systemctl restart netdata
 The alarms are configured as follows:
 
 > Elrond node is not maintaining syncronization
-- WARNING if out of sync more than 2:5 (hysteresis) consensus rounds
-- CRITICAL if out of sync more than 100:200 (hysteresis) consensus rounds 
+- WARNING if out of sync more than 02:20 (hysteresis) consensus rounds
+- CRITICAL if out of sync more than 20:200 (hysteresis) consensus rounds 
 
 > Elrond node rate dropping
 - WARNING if node rate is dropping under 100
 - CRITICAL if node rate is dropping under 85
 
-> Elrond node Leader blocks proposed versus block accepted dropping
-- WARNING if leader blocks proposed versus blocks accepted are greater than 0
-- CRITICAL if leader blocks proposed versus blocks accepted are greater than 10
+> Elrond node Leader blocks proposed versus blocks accepted dropping
+- WARNING if leader blocks proposed versus blocks accepted are greater than 01:02 (hysteresis)
+- CRITICAL if leader blocks proposed versus blocks accepted are greater than 02:05 (hysteresis)
 
 > Elrond node Validator blocks signed versus blocks accepted dropping
-- WARNING if validator blocks signed versus blocks accepted are greater than 2
-- CRITICAL if validator blocks signed versus blocks accepted are greater than 20
+- WARNING if validator blocks signed versus blocks accepted are greater than 10:20 (hysteresis)
+- CRITICAL if validator blocks signed versus blocks accepted are greater than 20:250 (hysteresis)
 
 > Elrond node peers dropping
-- WARNING if peers are dropping under 40
-- CRITICAL if peers are dropping under 30
+- WARNING if peers are dropping under 35:30 (hysteresis)
+- CRITICAL if peers are dropping under 30:20 (hysteresis)
 
 
 Alarms can be configured with the following command:
