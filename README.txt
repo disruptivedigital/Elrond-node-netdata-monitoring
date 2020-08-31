@@ -1,5 +1,4 @@
 Elrond real-time node performance and health monitoring
-
 powered by DisruptiveDigital 2020
 
 In case you have other node charts scripts active please delete them all. You can check them here /usr/libexec/netdata/charts.d/.
@@ -23,9 +22,7 @@ Edit config charts.d.conf:
 sudo nano /etc/netdata/edit-config charts.d.conf
 
 Add the following:
-
 enable_all_charts="yes"
-
 elrond="yes"
 
 cd /usr/libexec/netdata/charts.d/ && sudo chmod +x elrond.chart.sh && sudo chmod 755 elrond.chart.sh
