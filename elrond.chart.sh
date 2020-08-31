@@ -51,7 +51,7 @@ elrond_get() {
   elrond_connected_validators="$( curl -sSL http://localhost:8080/node/heartbeatstatus | jq '.' | grep peerType | grep -c -v observer )"
   elrond_connected_nodes="$( curl -sSL http://localhost:8080/node/status | jq .data.metrics.erd_connected_nodes )"
   elrond_bls="$( curl -sSL http://localhost:8080/node/status | jq -r .data.metrics.erd_public_key_block_sign )"
-  elrond_tempRating="$( curl -sSL https://testnet-api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".tempRating' | head -c5 )"
+  elrond_tempRating="$( curl -sSL https://api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".tempRating' | head -c5 )"
   elrond_count_consensus="$( curl -sSL http://localhost:8080/node/status | jq -r .data.metrics.erd_count_consensus )"
   elrond_count_consensus_accepted_blocks="$( curl -sSL http://localhost:8080/node/status | jq -r .data.metrics.erd_count_consensus_accepted_blocks )"
   elrond_count_leader="$( curl -sSL http://localhost:8080/node/status | jq -r .data.metrics.erd_count_leader )"
