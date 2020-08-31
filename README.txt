@@ -49,8 +49,8 @@ The alarms are configured as follows:
 - CRITICAL if validator blocks signed versus blocks accepted are greater than 20:250 (hysteresis)
 
 > Elrond node peers dropping
-- WARNING if peers are dropping under 35:30 (hysteresis)
-- CRITICAL if peers are dropping under 30:20 (hysteresis)
+- WARNING if peers are dropping under 45:40 (hysteresis)
+- CRITICAL if peers are dropping under 40:30 (hysteresis)
 
 
 Alarms can be configured with the following command:
