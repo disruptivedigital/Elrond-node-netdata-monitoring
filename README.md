@@ -1,7 +1,7 @@
 Elrond real-time node performance and health monitoring
 powered by DisruptiveDigital 2020
 
-In case you have other node charts active please delete them all. You can check them here /usr/libexec/netdata/charts.d/. 
+In case you have other node charts scripts active please delete them all. You can check them here /usr/libexec/netdata/charts.d/. 
 Example:
 cd /usr/libexec/netdata/charts.d/ && ls
 sudo rm sync.chart.sh
