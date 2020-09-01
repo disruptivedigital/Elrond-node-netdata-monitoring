@@ -57,4 +57,8 @@ Alarms can be configured with the following command:
 cd /etc/netdata/health.d/ && sudo nano elrond.conf
 
 Then,
+To reload only the health monitoring component execute:
+sudo killall -USR2 netdata
+
+Alternatively you can restart netdata with:  
 sudo systemctl restart netdata
