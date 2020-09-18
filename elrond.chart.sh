@@ -37,6 +37,16 @@ elrond_count_consensus=
 elrond_count_consensus_accepted_blocks=
 elrond_count_leader=
 elrond_count_accepted_blocks=
+elrond_num_leader_success=
+elrond_num_leader_failure=
+elrond_num_validator_success=
+elrond_num_validator_failure=
+elrond_num_validator_ignored_signatures=
+elrond_total_num_leader_success=
+elrond_total_num_leader_failure=
+elrond_total_num_validator_success=
+elrond_total_num_validator_failure=
+elrond_total_num_validator_ignored_signatures=
 
 elrond_get() {
 
@@ -56,6 +66,16 @@ elrond_get() {
   elrond_count_consensus_accepted_blocks="$( curl -sSL http://localhost:8080/node/status | jq -r .data.metrics.erd_count_consensus_accepted_blocks )"
   elrond_count_leader="$( curl -sSL http://localhost:8080/node/status | jq -r .data.metrics.erd_count_leader )"
   elrond_count_accepted_blocks="$( curl -sSL http://localhost:8080/node/status | jq -r .data.metrics.erd_count_accepted_blocks )"
+  elrond_num_leader_success="$( curl -sSL https://api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".numLeaderSuccess' )"
+  elrond_num_leader_failure="$( curl -sSL https://api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".numLeaderFailure' )"
+  elrond_num_validator_success="$( curl -sSL https://api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".numValidatorSuccess' )"
+  elrond_num_validator_failure="$( curl -sSL https://api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".numValidatorFailure' )"
+  elrond_num_validator_ignored_signatures="$( curl -sSL https://api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".numValidatorIgnoredSignatures' )"
+  elrond_total_num_leader_success="$( curl -sSL https://api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".totalNumLeaderSuccess' )"
+  elrond_total_num_leader_failure="$( curl -sSL https://api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".totalNumLeaderFailure' )"
+  elrond_total_num_validator_success="$( curl -sSL https://api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".totalNumValidatorSuccess' )"
+  elrond_total_num_validator_failure="$( curl -sSL https://api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".totalNumValidatorFailure' )"
+  elrond_total_num_validator_ignored_signatures="$( curl -sSL https://api.elrond.com/validator/statistics | jq '.data.statistics."'$elrond_bls'".totalNumValidatorIgnoredSignatures' )"
 
   # this should return:
   #  - 0 to send the data to netdata
@@ -85,24 +105,40 @@ elrond_create() {
   elrond_get || return 1
 
   cat << EOF
-CHART elrond.sync '' "$elrond_node_type/$elrond_peer_type E:$elrond_epoch_number S:$elrond_shard_id P/V/N:$elrond_connected_peers/$elrond_connected_validators/$elrond_connected_nodes R:$elrond_tempRating V:$elrond_app_version" "Round" consensus-round round line $((elrond_priority)) $elrond_update_every
+CHART elrond.sync '' "$elrond_node_type/$elrond_peer_type E:$elrond_epoch_number S:$elrond_shard_id P/V/N:$elrond_connected_peers/$elrond_connected_validators/$elrond_connected_nodes R:$elrond_tempRating $elrond_app_version" "Round" "Consensus round" round line $((elrond_priority)) $elrond_update_every
 DIMENSION current 'Current' absolute 1 1
 DIMENSION synced 'Synced' absolute 1 1
-CHART elrond.validatorblocks '' "Validator blocks signed/accepted" "Blocks" validator-blocks blocks line $((elrond_priority + 1)) $elrond_update_every
+CHART elrond.validatorblocks '' "Validator blocks signed/accepted" "Blocks" "Validator blocks" blocks area $((elrond_priority + 1)) $elrond_update_every
 DIMENSION signedblocks 'Signed' absolute 1 1
 DIMENSION signedaccepted 'Accepted' absolute 1 1
-CHART elrond.leaderblocks '' "Leader blocks proposed/accepted" "Blocks" leader-blocks blocks line $((elrond_priority + 2)) $elrond_update_every
+CHART elrond.leaderblocks '' "Leader blocks proposed/accepted" "Blocks" "Leader blocks" blocks area $((elrond_priority + 2)) $elrond_update_every
 DIMENSION leaderproposed 'Proposed' absolute 1 1
 DIMENSION leaderaccepted 'Accepted' absolute 1 1
-CHART elrond.rating '' "Current rating" "Rating" current-rating rating line $((elrond_priority + 3)) $elrond_update_every
+CHART elrond.rating '' "Current rating" "Rating" "Current rating" rating stacked $((elrond_priority + 3)) $elrond_update_every
 DIMENSION rating 'Rating' absolute 1 1
-CHART elrond.epoch '' "Current epch" "Epoch" current-epoch epoch line $((elrond_priority + 4)) $elrond_update_every
+CHART elrond.epoch '' "Current epch" "Epoch" "Current epoch" epoch stacked $((elrond_priority + 4)) $elrond_update_every
 DIMENSION epoch 'Epoch' absolute 1 1
-CHART elrond.peers '' "Connected peers" "Peers" peers peers line $((elrond_priority + 5)) $elrond_update_every
+CHART elrond.peers '' "Connected peers" "Connected peers" Peers peers stacked $((elrond_priority + 5)) $elrond_update_every
 DIMENSION peers 'Peers' absolute 1 1
-CHART elrond.validators_nodes '' "Connected validators/nodes" "Validators/Nodes" validators-nodes pvn line $((elrond_priority + 6)) $elrond_update_every
+CHART elrond.validators_nodes '' "Connected validators/nodes" "Validators/Nodes" "Validators/Nodes" pvn area $((elrond_priority + 6)) $elrond_update_every
 DIMENSION validators 'Validators' absolute 1 1
 DIMENSION nodes 'Nodes' absolute 1 1
+CHART elrond.num_leader '' "Num leader success/failure" "Leader success/failure" "Leader success/failure" lsf area $((elrond_priority + 7)) $elrond_update_every
+DIMENSION leader_success 'Success' absolute 1 1
+DIMENSION leader_failure 'Failure' absolute 1 1
+CHART elrond.num_validator '' "Num validator success/failure" "Validator success/failure" "Validator success/failure" vsf area $((elrond_priority + 8)) $elrond_update_every
+DIMENSION validator_success 'Success' absolute 1 1
+DIMENSION validator_failure 'Failure' absolute 1 1
+CHART elrond.ignored_signatures '' "Ignored signatures" "Signatures" "Ignored signatures" ignored_signatures stacked $((elrond_priority + 9)) $elrond_update_every
+DIMENSION validator_ignored_signatures 'Ignored' absolute 1 1
+CHART elrond.total_num_leader '' "Total num leader success/failure" "Leader success/failure" "Total leader success/failure" tlsf area $((elrond_priority + 10)) $elrond_update_every
+DIMENSION total_leader_success 'Success' absolute 1 1
+DIMENSION total_leader_failure 'Failure' absolute 1 1
+CHART elrond.total_num_validator '' "Total num validator success/failure" "Validator success/failure" "Total vldt. success/failure" tvsf area $((elrond_priority + 11)) $elrond_update_every
+DIMENSION total_validator_success 'Success' absolute 1 1
+DIMENSION total_validator_failure 'Failure' absolute 1 1
+CHART elrond.total_ignored_signatures '' "Total ignored signatures" "Signatures" "Total ignored signatures" "Total ignored signatures" stacked $((elrond_priority + 12)) $elrond_update_every
+DIMENSION total_validator_ignored_signatures 'Ignored' absolute 1 1
 EOF
 
   return 0
@@ -141,6 +177,28 @@ END
 BEGIN elrond.validators_nodes $1
 SET validators = $elrond_connected_validators
 SET nodes = $elrond_connected_nodes
+END
+BEGIN elrond.num_leader $1
+SET leader_success = $elrond_num_leader_success
+SET leader_failure = $elrond_num_leader_failure
+END
+BEGIN elrond.num_validator $1
+SET validator_success = $elrond_num_validator_success
+SET validator_failure = $elrond_num_validator_failure
+END
+BEGIN elrond.ignored_signatures $1
+SET validator_ignored_signatures = $elrond_num_validator_ignored_signatures
+END
+BEGIN elrond.total_num_leader $1
+SET total_leader_success = $elrond_total_num_leader_success
+SET total_leader_failure = $elrond_total_num_leader_failure
+END
+BEGIN elrond.total_num_validator $1
+SET total_validator_success = $elrond_total_num_validator_success
+SET total_validator_failure = $elrond_total_num_validator_failure
+END
+BEGIN elrond.total_ignored_signatures $1
+SET total_validator_ignored_signatures = $elrond_total_num_validator_ignored_signatures
 END
 VALUESEOF
 
